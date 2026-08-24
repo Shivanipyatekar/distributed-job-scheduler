@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS organization_members (
+  organization_id UUID NOT NULL
+    REFERENCES organizations(id)
+    ON DELETE CASCADE,
+
+  user_id UUID NOT NULL
+    REFERENCES users(id)
+    ON DELETE CASCADE,
+
+  role TEXT NOT NULL DEFAULT 'member',
+
+  joined_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+
+  PRIMARY KEY (organization_id, user_id)
+);

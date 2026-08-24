@@ -1,0 +1,132 @@
+version: "2.4"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: runline-postgres
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - runline_postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+    restart: unless-stopped
+
+
+  migrate:
+    build:
+      context: ./backend
+
+    image: runline-backend
+
+    environment:
+      NODE_ENV: production
+
+      DATABASE_URL: >-
+        postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    command:
+      - npm
+      - run
+      - migrate
+
+    restart: "no"
+
+
+  api:
+    image: runline-backend
+    container_name: runline-api
+
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+
+      DATABASE_URL: >-
+        postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+
+    ports:
+      - "5000:5000"
+
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+    command:
+      - npm
+      - start
+
+    restart: unless-stopped
+
+
+  worker:
+    image: runline-backend
+    container_name: runline-worker
+
+    environment:
+      NODE_ENV: production
+
+      DATABASE_URL: >-
+        postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+
+      WORKER_CONCURRENCY: 5
+      CRON_MATERIALIZER_INTERVAL_MS: 5000
+
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+    command:
+      - node
+      - src/worker.js
+
+    restart: unless-stopped
+
+
+  frontend:
+    build:
+      context: ./frontend
+
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+
+    image: runline-frontend
+    container_name: runline-frontend
+
+    ports:
+      - "8080:80"
+
+    depends_on:
+      api:
+        condition: service_started
+
+    restart: unless-stopped
+
+
+volumes:
+  runline_postgres_data:

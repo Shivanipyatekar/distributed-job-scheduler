@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans:
+    "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  --color-canvas: #f4f3ee;
+  --color-surface: #fffefa;
+  --color-surface-muted: #eceee8;
+
+  --color-ink: #18211e;
+  --color-muted: #68736e;
+  --color-line: #d8ddd6;
+
+  --color-brand: #1f6f5f;
+  --color-brand-strong: #155548;
+  --color-brand-soft: #dff1e9;
+
+  --color-accent: #df6843;
+  --color-accent-soft: #fbe8df;
+
+  --color-info: #4259a8;
+  --color-info-soft: #e9edfb;
+  --color-success: #2f7d57;
+  --color-success-soft: #e3f2e8;
+  --color-warning: #a96c18;
+  --color-warning-soft: #fbefd9;
+  --color-danger: #b33e3e;
+  --color-danger-soft: #f9e4e4;
+
+  --shadow-panel:
+    0 1px 2px rgb(24 33 30 / 5%), 0 12px 32px rgb(24 33 30 / 6%);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-width: 320px;
+    min-height: 100%;
+    background: var(--color-canvas);
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background: var(--color-brand-soft);
+    color: var(--color-brand-strong);
+  }
+}
