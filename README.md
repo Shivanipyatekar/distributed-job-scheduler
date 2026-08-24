@@ -12,6 +12,8 @@ The system supports authenticated organizations and projects, configurable queue
 | Backend API | [https://runline-api.onrender.com](https://runline-api.onrender.com) |
 | API Health | [https://runline-api.onrender.com/api/health](https://runline-api.onrender.com/api/health) |
 
+> **Demo Login:** For the best experience and to access more features, please preferably use **Email:** `sneha@example.com` **Password:** `Sneha@123`
+
 ![Distributed Job Scheduler Architecture](Documentation/images/system-architecture.png)
 
 ## Documentation
